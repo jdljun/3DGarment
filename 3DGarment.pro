@@ -19,6 +19,7 @@ SOURCES += main.cpp\
 
 HEADERS  += mainwindow.h \
     reader.h \
-    bmp.h
+    bmp.h \
+    basic.h
 
 FORMS    += mainwindow.ui

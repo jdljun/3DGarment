@@ -6,6 +6,7 @@ class bmp
 {
 public:
     bmp();
+
 };
 
 #endif // BMP_H
