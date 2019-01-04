@@ -14,12 +14,15 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    reader.cpp \
-    bmp.cpp
+    reader.cpp
 
 HEADERS  += mainwindow.h \
     reader.h \
-    bmp.h \
     basic.h
 
 FORMS    += mainwindow.ui
+
+DISTFILES +=
+
+RESOURCES += \
+    image.qrc
