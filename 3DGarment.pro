@@ -25,5 +25,30 @@ FORMS    += mainwindow.ui
 
 DISTFILES +=
 
+CONFIG+=resources_big
+
 RESOURCES += \
     image.qrc
+
+INCLUDEPATH += D:\opencv\opencv\build\include\
+
+INCLUDEPATH += D:\opencv\opencv\build\include\opencv\
+
+INCLUDEPATH += D:\opencv\opencv\build\include\opencv2\
+
+CONFIG(debug,debug|release) {
+LIBS += -Ld:\opencv\opencv\build\x64\vc14\lib \
+    -lopencv_core2413d \
+    -lopencv_highgui2413d \
+    -lopencv_imgproc2413d \
+    -lopencv_features2d2413d \
+    -lopencv_calib3d2413d
+} else {
+LIBS += -Ld:\opencv\opencv\build\x64\vc14\lib \
+    -lopencv_core2413\
+    -lopencv_highgui2413 \
+    -lopencv_imgproc2413 \
+    -lopencv_features2d2413 \
+    -lopencv_calib3d2413
+}
+

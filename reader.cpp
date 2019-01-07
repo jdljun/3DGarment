@@ -1,4 +1,4 @@
-#include "reader.h"
+﻿#include "reader.h"
 
 #include <qdatastream.h>
 reader::reader()
