@@ -10,6 +10,9 @@
 #include <QMenu>
 #include <QPointF>
 #include <QMenu>
+#include <map>
+#include <QkeyEvent>
+#include <grubcuter.h>
 
 namespace Ui {
 class MainWindow;
@@ -24,10 +27,21 @@ public:
     ~MainWindow();
     void paintEvent(QPaintEvent *);
     void mousePressEvent(QMouseEvent *);
+    void mouseReleaseEvent(QMouseEvent *);
+    void keyPressEvent(QKeyEvent*);
 
 private:
     Ui::MainWindow *ui;
+    QImage image;
+    QString windowtitle;
     QPointF mouseposition;
+
+    //服装所处矩形框
+    QPointF leftup;
+    QPointF rightdown;
+
+    multimap<int, int> backgroundpiexls;
+    multimap<int, int> foregroundpiexls;
 
 private slots:
     void showmenu();

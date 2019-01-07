@@ -33,6 +33,15 @@ public:
     quint32 clrImportant;
 };
 
+class RGB
+{
+public:
+    quint8  b;
+    quint8  g;
+    quint8  r;
+    quint8 rgbReserved;
+};
+
 class bitmap
 {
 private:

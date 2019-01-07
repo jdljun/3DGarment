@@ -6,6 +6,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     connect(this,SIGNAL(customMousePressEvent()),this,SLOT(showmenu()));
+    image.load(":/person.bmp");
+    windowtitle = "background and foreground select";
     ui->setupUi(this);
 }
 /*
@@ -25,8 +27,6 @@ repaint()函数会强制产生一个即时的重绘事件,而update()函数只�
 void MainWindow::paintEvent(QPaintEvent * event)
 {
     QPainter painter(this);
-    QImage image;
-    image.load(":/person.bmp");
     int w = image.width(); //横轴
     int h = image.height();//纵轴
     int neww,newh;
@@ -44,7 +44,7 @@ void MainWindow::paintEvent(QPaintEvent * event)
 
     //根据图片大小设置窗口大小
     this->resize(QSize(neww,newh));
-    this->setWindowTitle("请选取服装背景点和前景点");
+    this->setWindowTitle(windowtitle);
 
     //窗口居中
     QDesktopWidget* desktop = QApplication::desktop();
@@ -52,12 +52,30 @@ void MainWindow::paintEvent(QPaintEvent * event)
 
     //绘制图片
     painter.drawImage(QPoint(0,0),image);
+
+    //画服装所在的矩形框
+    painter.setPen(QPen(Qt::red,4));
+    painter.drawRect(leftup.x(),leftup.y(),rightdown.x()-leftup.x(),rightdown.y()-leftup.y());
+
+    //标记背景点（蓝色）和前景点（红色）
+    multimap<int,int>::iterator it;
+    for( it = backgroundpiexls.begin();it!=backgroundpiexls.end();it++){
+        painter.setPen(Qt::blue);
+        painter.setBrush(Qt::blue);
+        painter.drawEllipse(QPointF(it->first,it->second),4,4);
+    }
+    for( it = foregroundpiexls.begin();it!=foregroundpiexls.end();it++){
+        painter.setPen(Qt::red);
+        painter.setBrush(Qt::red);
+        painter.drawEllipse(QPointF(it->first,it->second),4,4);
+    }
+
 }
 
 //鼠标右键事件 标记前景背景点
 void MainWindow::mousePressEvent(QMouseEvent *event){
     if(event->button()==Qt::LeftButton){
-
+        leftup = event->localPos();
     }
     else if(event->button()==Qt::RightButton){
         //获取鼠标点击点坐标
@@ -68,11 +86,27 @@ void MainWindow::mousePressEvent(QMouseEvent *event){
     }
 }
 
+void MainWindow::mouseReleaseEvent(QMouseEvent *event){
+    rightdown = event->localPos();
+    QWidget::update();
+}
+
+void MainWindow::keyPressEvent(QKeyEvent* event){
+    if(event->modifiers() == Qt::Key_Enter){
+        grubcuter GrubCuter(image,backgroundpiexls,foregroundpiexls,
+                            (int)leftup.x(),(int)leftup.y(),
+                            (int)rightdown.x()-(int)leftup.x(),(int)rightdown.y()-(int)leftup.y());
+        image = GrubCuter.getQImage();
+        windowtitle = "please do garment patern cut";
+        QWidget::update();
+    }
+}
+
 void MainWindow::showmenu(){
     QMenu *menu = new QMenu(this);
-    QAction *background = menu->addAction("背景点");
-    QAction *foreground = menu->addAction("前景点");
-    QAction *cancel = menu->addAction("取消");
+    QAction *background = menu->addAction("background piexl");
+    QAction *foreground = menu->addAction("foreground piexl");
+    QAction *cancel = menu->addAction("cancel");
     connect(background, SIGNAL(triggered(bool)), this, SLOT(addbackground()));
     connect(foreground, SIGNAL(triggered(bool)), this, SLOT(addforeground()));
     connect(cancel, SIGNAL(triggered(bool)), this, SLOT(cancel()));
@@ -80,11 +114,13 @@ void MainWindow::showmenu(){
 }
 
 void MainWindow::addbackground(){
-
+    backgroundpiexls.insert(pair<int,int>((int)mouseposition.x(),(int)mouseposition.y()));
+    QWidget::update();
 }
 
 void MainWindow::addforeground(){
-
+    foregroundpiexls.insert(pair<int,int>((int)mouseposition.x(),(int)mouseposition.y()));
+    QWidget::update();
 }
 
 void MainWindow::cancel(){

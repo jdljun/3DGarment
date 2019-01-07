@@ -14,12 +14,14 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
     reader.cpp \
-    mainwindow.cpp
+    mainwindow.cpp \
+    grubcuter.cpp
 
 HEADERS  += \
     reader.h \
     basic.h \
-    mainwindow.h
+    mainwindow.h \
+    grubcuter.h
 
 FORMS    += mainwindow.ui
 
