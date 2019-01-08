@@ -26,6 +26,7 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
     void paintEvent(QPaintEvent *);
+    void mouseMoveEvent(QMouseEvent* );
     void mousePressEvent(QMouseEvent *);
     void mouseReleaseEvent(QMouseEvent *);
     void keyPressEvent(QKeyEvent*);
@@ -33,13 +34,14 @@ public:
 private:
     Ui::MainWindow *ui;
     QImage image;
-    QString windowtitle;
+    QString windowtitle = "background and foreground select";
     QPointF mouseposition;
 
     //服装所处矩形框
     QPointF leftup;
     QPointF rightdown;
 
+    multimap<int, int> tracepiexls;
     multimap<int, int> backgroundpiexls;
     multimap<int, int> foregroundpiexls;
 

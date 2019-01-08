@@ -6,6 +6,7 @@
 #include <QImage>
 #include <map>
 #include <QDebug>
+#include <iostream>
 
 using namespace cv;
 using namespace std;
@@ -20,11 +21,17 @@ public:
     QImage getQImage();
 
 private:
-    const Mat* image;
+    Mat image;
     Mat mask;
+    Mat binMask;
+    Mat res;
     Rect rect;
     Mat bgdModel, fgdModel;
     const int iterCount = 1;
+
+    void setRectInMask();
+    void setLblsInMask(multimap<int, int> backgroundpiexls, multimap<int, int> foregroundpiexls);
+    void getBinMask();
 
     Mat QImage_to_Mat( const QImage &image);
     QImage cvMat_to_QImage(const Mat &mat );

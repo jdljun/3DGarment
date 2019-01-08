@@ -7,15 +7,43 @@ grubcuter::grubcuter()
 
 grubcuter::grubcuter(QImage image, multimap<int, int> backgroundpiexls, multimap<int, int> foregroundpiexls,
           int x, int y, int w, int h){
-    this->image = &QImage_to_Mat(image);
+    this->image = QImage_to_Mat(image);
+    mask.create(this->image.size(),CV_8UC1);
+    rect.x = x;
+    rect.y = y;
+    rect.width = w;
+    rect.height = h;
+
+    setRectInMask();
+    setLblsInMask(backgroundpiexls,foregroundpiexls);
+
+    grubCut();
 }
 
 void grubcuter::grubCut(){
-    grabCut(*image,mask,rect,bgdModel,fgdModel,iterCount,GC_INIT_WITH_RECT);
+    image.copyTo(res);
+    cvtColor(res , res , CV_RGBA2RGB);
+    grabCut(res,mask,rect,bgdModel,fgdModel,iterCount,GC_INIT_WITH_RECT);
+
+    getBinMask();
+
+    image.copyTo( res, binMask );
+
+    namedWindow("Lena");
+    imshow("Lena",res);
+    waitKey(1);
+}
+
+void grubcuter::getBinMask(){
+    if( mask.empty() || mask.type()!=CV_8UC1 )
+        CV_Error( CV_StsBadArg, "comMask is empty or has incorrect type (not CV_8UC1)" );
+    if( binMask.empty() || binMask.rows!=mask.rows || binMask.cols!=mask.cols )
+        binMask.create( mask.size(), CV_8UC1 );
+    binMask = mask & 1;  //得到mask的最低位,实际上是只保留确定的或者有可能的前景点当做mask
 }
 
 QImage grubcuter::getQImage(){
-    return cvMat_to_QImage(*image);
+    return cvMat_to_QImage(image);
 }
 
 /*
@@ -57,6 +85,24 @@ mode——用于指示grabCut函数进行什么操作，可选的值有：
       GC_EVAL（=2），执行分割。
 
 */
+
+void grubcuter::setRectInMask(){
+    assert( !mask.empty() );
+    mask.setTo( GC_BGD );
+    (mask(rect)).setTo( Scalar(GC_PR_FGD) );
+}
+
+void grubcuter::setLblsInMask(multimap<int, int> backgroundpiexls, multimap<int, int> foregroundpiexls){
+    multimap<int,int>::iterator it;
+    for( it = backgroundpiexls.begin();it!=backgroundpiexls.end();it++){
+        uchar* p = mask.ptr<uchar>(it->second);
+        p[it->first] = GC_BGD;
+    }
+    for( it = foregroundpiexls.begin();it!=foregroundpiexls.end();it++){
+        uchar* p = mask.ptr<uchar>(it->second);
+        p[it->first] = GC_FGD;
+    }
+}
 
 Mat grubcuter::QImage_to_Mat( const QImage &image){
     bool inCloneImageData = true;
@@ -134,4 +180,21 @@ QImage grubcuter::cvMat_to_QImage(const Mat &mat ){
     }
     return QImage();
 }
+
+/*
+    uchar* pxvec=mask.ptr<uchar>(0);
+    //遍历访问Mat中各个像素值
+    int i, j;
+    for (i = 0; i <= 0; i++)
+    {
+        pxvec = mask.ptr<uchar>(i);
+        //三通道数据都在第一行依次排列，按照BGR顺序
+        //依次赋值为1
+        for (j = 0; j < mask.cols*mask.channels(); j++)
+        {
+            cout<<pxvec[j]<<" ";
+        }
+        cout<<endl;
+    }
+ */
 

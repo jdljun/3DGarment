@@ -6,8 +6,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     connect(this,SIGNAL(customMousePressEvent()),this,SLOT(showmenu()));
-    image.load(":/person.bmp");
-    windowtitle = "background and foreground select";
+    image.load(":/white.jpg");
     ui->setupUi(this);
 }
 /*
@@ -82,30 +81,41 @@ void MainWindow::mousePressEvent(QMouseEvent *event){
         mouseposition = event->localPos();
 
         //触发信息槽 弹出菜单栏
-        customMousePressEvent();
+       // customMousePressEvent();
+    }
+}
+
+void MainWindow::mouseMoveEvent(QMouseEvent* event){
+    if(event->buttons() & Qt::RightButton){
+        QPointF p = event->localPos();
+        tracepiexls.insert(pair<int,int>((int)p.x(),(int)p.y()));
     }
 }
 
 void MainWindow::mouseReleaseEvent(QMouseEvent *event){
-    rightdown = event->localPos();
-    QWidget::update();
+    if(event->button()==Qt::LeftButton){
+        rightdown = event->localPos();
+        QWidget::update();
+    }
+    else if(event->button()==Qt::RightButton){
+        customMousePressEvent();
+    }
+
 }
 
 void MainWindow::keyPressEvent(QKeyEvent* event){
-    if(event->modifiers() == Qt::Key_Enter){
+
+    if(event->key() == Qt::Key_Enter || event->key() == Qt::Key_Return){
         grubcuter GrubCuter(image,backgroundpiexls,foregroundpiexls,
                             (int)leftup.x(),(int)leftup.y(),
                             (int)rightdown.x()-(int)leftup.x(),(int)rightdown.y()-(int)leftup.y());
-        image = GrubCuter.getQImage();
-        windowtitle = "please do garment patern cut";
-        QWidget::update();
     }
 }
 
 void MainWindow::showmenu(){
     QMenu *menu = new QMenu(this);
-    QAction *background = menu->addAction("background piexl");
-    QAction *foreground = menu->addAction("foreground piexl");
+    QAction *background = menu->addAction("background piexls");
+    QAction *foreground = menu->addAction("foreground piexls");
     QAction *cancel = menu->addAction("cancel");
     connect(background, SIGNAL(triggered(bool)), this, SLOT(addbackground()));
     connect(foreground, SIGNAL(triggered(bool)), this, SLOT(addforeground()));
@@ -114,17 +124,25 @@ void MainWindow::showmenu(){
 }
 
 void MainWindow::addbackground(){
-    backgroundpiexls.insert(pair<int,int>((int)mouseposition.x(),(int)mouseposition.y()));
+    multimap<int,int>::iterator it;
+    for( it = tracepiexls.begin();it!=tracepiexls.end();it++){
+        backgroundpiexls.insert(pair<int,int>((int)it->first,(int)it->second));
+    }
+    tracepiexls.clear();
     QWidget::update();
 }
 
 void MainWindow::addforeground(){
-    foregroundpiexls.insert(pair<int,int>((int)mouseposition.x(),(int)mouseposition.y()));
+    multimap<int,int>::iterator it;
+    for( it = tracepiexls.begin();it!=tracepiexls.end();it++){
+        foregroundpiexls.insert(pair<int,int>((int)it->first,(int)it->second));
+    }
+    tracepiexls.clear();
     QWidget::update();
 }
 
 void MainWindow::cancel(){
-
+    tracepiexls.clear();
 }
 
 MainWindow::~MainWindow()
