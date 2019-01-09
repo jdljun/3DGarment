@@ -1,6 +1,7 @@
 <RCC>
     <qresource prefix="/">
-        <file>person.bmp</file>
         <file>white.jpg</file>
+        <file>gray.jpg</file>
+        <file>best.jpg</file>
     </qresource>
 </RCC>

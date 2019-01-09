@@ -14,23 +14,22 @@ grubcuter::grubcuter(QImage image, multimap<int, int> backgroundpiexls, multimap
     rect.width = w;
     rect.height = h;
 
+    grubCut(backgroundpiexls,foregroundpiexls);
+}
+
+void grubcuter::grubCut(multimap<int, int> backgroundpiexls, multimap<int, int> foregroundpiexls){
     setRectInMask();
     setLblsInMask(backgroundpiexls,foregroundpiexls);
 
-    grubCut();
-}
-
-void grubcuter::grubCut(){
     image.copyTo(res);
     cvtColor(res , res , CV_RGBA2RGB);
-    grabCut(res,mask,rect,bgdModel,fgdModel,iterCount,GC_INIT_WITH_RECT);
-
+    grabCut(res,mask,rect,bgdModel,fgdModel,iterCount,GC_INIT_WITH_MASK);
     getBinMask();
 
     image.copyTo( res, binMask );
 
-    namedWindow("Lena");
-    imshow("Lena",res);
+    namedWindow("grubcut result");
+    imshow("grubcut result",res);
     waitKey(1);
 }
 
@@ -89,18 +88,42 @@ mode——用于指示grabCut函数进行什么操作，可选的值有：
 void grubcuter::setRectInMask(){
     assert( !mask.empty() );
     mask.setTo( GC_BGD );
-    (mask(rect)).setTo( Scalar(GC_PR_FGD) );
+   (mask(rect)).setTo( Scalar(GC_PR_FGD) );
 }
 
 void grubcuter::setLblsInMask(multimap<int, int> backgroundpiexls, multimap<int, int> foregroundpiexls){
+    int x, y;
     multimap<int,int>::iterator it;
     for( it = backgroundpiexls.begin();it!=backgroundpiexls.end();it++){
-        uchar* p = mask.ptr<uchar>(it->second);
-        p[it->first] = GC_BGD;
+        x = it->first;
+        y = it->second;
+        for(int i = y-40 ; i<y+40;i++){
+            if(i<0 || i>mask.cols)
+                continue;
+            for(int j=x-40;j<x+40;j++){
+                if(j<0 || j>mask.rows)
+                    continue;
+                uchar* p = mask.ptr<uchar>(i);
+                if(abs(y-i)<=20 && abs(x-j)<=20)
+                    p[j] = GC_BGD;
+                else
+                    p[j] = GC_PR_BGD;
+            }
+        }
     }
     for( it = foregroundpiexls.begin();it!=foregroundpiexls.end();it++){
-        uchar* p = mask.ptr<uchar>(it->second);
-        p[it->first] = GC_FGD;
+        x = it->first;
+        y = it->second;
+        for(int i = y-20 ; i<y+20;i++){
+            if(i<0 || i>mask.cols)
+                continue;
+            for(int j=x-20;j<x+20;j++){
+                if(j<0 || j>mask.rows)
+                    continue;
+                uchar* p = mask.ptr<uchar>(i);
+                p[j] = GC_FGD;
+            }
+        }
     }
 }
 

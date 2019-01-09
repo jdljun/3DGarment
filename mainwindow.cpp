@@ -6,7 +6,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     connect(this,SIGNAL(customMousePressEvent()),this,SLOT(showmenu()));
-    image.load(":/white.jpg");
+    image.load(":/best.jpg");
     ui->setupUi(this);
 }
 /*

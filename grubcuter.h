@@ -17,7 +17,7 @@ public:
     grubcuter();
     grubcuter(QImage image, multimap<int, int> backgroundpiexls, multimap<int, int> foregroundpiexls,
               int x, int y, int w, int h);
-    void grubCut();
+    void grubCut(multimap<int, int> backgroundpiexls, multimap<int, int> foregroundpiexls);
     QImage getQImage();
 
 private:
@@ -27,7 +27,7 @@ private:
     Mat res;
     Rect rect;
     Mat bgdModel, fgdModel;
-    const int iterCount = 1;
+    const int iterCount = 3;
 
     void setRectInMask();
     void setLblsInMask(multimap<int, int> backgroundpiexls, multimap<int, int> foregroundpiexls);
