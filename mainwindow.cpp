@@ -114,6 +114,10 @@ void MainWindow::keyPressEvent(QKeyEvent* event){
         initValue();
         QWidget::update();
     }
+    //press y: grubcut result is ok
+    if(event->key() == Qt::Key_Y){
+
+    }
 }
 
 void MainWindow::showmenu(){
@@ -150,6 +154,12 @@ void MainWindow::cancel(){
 }
 
 void MainWindow::initValue(){
+    windowtitle = "grubcut result, press 'Y' next step";
+    leftup.setX(0); leftup.setY(0);
+    rightdown.setX(0);rightdown.setY(0);
+    tracepiexls.clear();
+    backgroundpiexls.clear();
+    foregroundpiexls.clear();
 
 }
 
