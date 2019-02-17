@@ -50,6 +50,7 @@ private slots:
     void addbackground();
     void addforeground();
     void cancel();
+    void initValue();
 signals:
     void customMousePressEvent();
 

@@ -6,5 +6,6 @@
 
 using namespace std;
 
-
+//
+const string grubcutResultPath="C:\\Users\\lenovo-pc\\Desktop\\3DGarment\\3DGarment\\grubcutresult.jpg";
 #endif // BASIC_H

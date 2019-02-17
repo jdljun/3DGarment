@@ -3,10 +3,14 @@
 
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
+#include <opencv2/opencv.hpp>
+#include <cv.h>
 #include <QImage>
 #include <map>
 #include <QDebug>
 #include <iostream>
+#include <vector>
+#include <basic.h>
 
 using namespace cv;
 using namespace std;
@@ -18,7 +22,6 @@ public:
     grubcuter(QImage image, multimap<int, int> backgroundpiexls, multimap<int, int> foregroundpiexls,
               int x, int y, int w, int h);
     void grubCut(multimap<int, int> backgroundpiexls, multimap<int, int> foregroundpiexls);
-    QImage getQImage();
 
 private:
     Mat image;

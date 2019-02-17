@@ -3,5 +3,6 @@
         <file>white.jpg</file>
         <file>gray.jpg</file>
         <file>best.jpg</file>
+        <file>backwhite.jpg</file>
     </qresource>
 </RCC>

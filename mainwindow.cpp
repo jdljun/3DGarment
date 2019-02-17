@@ -6,7 +6,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     connect(this,SIGNAL(customMousePressEvent()),this,SLOT(showmenu()));
-    image.load(":/best.jpg");
+    image.load(":/backwhite.jpg");
+    cout<<image.size().width()<<endl;
     ui->setupUi(this);
 }
 /*
@@ -109,6 +110,9 @@ void MainWindow::keyPressEvent(QKeyEvent* event){
         grubcuter GrubCuter(image,backgroundpiexls,foregroundpiexls,
                             (int)leftup.x(),(int)leftup.y(),
                             (int)rightdown.x()-(int)leftup.x(),(int)rightdown.y()-(int)leftup.y());
+        image.load(QString::fromStdString(grubcutResultPath));
+        initValue();
+        QWidget::update();
     }
 }
 
@@ -143,6 +147,10 @@ void MainWindow::addforeground(){
 
 void MainWindow::cancel(){
     tracepiexls.clear();
+}
+
+void MainWindow::initValue(){
+
 }
 
 MainWindow::~MainWindow()

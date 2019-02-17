@@ -8,12 +8,14 @@ grubcuter::grubcuter()
 grubcuter::grubcuter(QImage image, multimap<int, int> backgroundpiexls, multimap<int, int> foregroundpiexls,
           int x, int y, int w, int h){
     this->image = QImage_to_Mat(image);
+    GaussianBlur(this->image, this->image, Size(3, 3), 0, 0, BORDER_DEFAULT);
     mask.create(this->image.size(),CV_8UC1);
     rect.x = x;
     rect.y = y;
     rect.width = w;
     rect.height = h;
 
+    //imwrite(grubcutResultPath,this->image);
     grubCut(backgroundpiexls,foregroundpiexls);
 }
 
@@ -28,9 +30,8 @@ void grubcuter::grubCut(multimap<int, int> backgroundpiexls, multimap<int, int> 
 
     image.copyTo( res, binMask );
 
-    namedWindow("grubcut result");
-    imshow("grubcut result",res);
-    waitKey(1);
+    //由于qt资源文件系统的特性，无法在程序运行的过程中改写qrc中的资源文件。所以写入到文件夹中，直接路径访问
+    imwrite(grubcutResultPath,res);
 }
 
 void grubcuter::getBinMask(){
@@ -41,9 +42,6 @@ void grubcuter::getBinMask(){
     binMask = mask & 1;  //得到mask的最低位,实际上是只保留确定的或者有可能的前景点当做mask
 }
 
-QImage grubcuter::getQImage(){
-    return cvMat_to_QImage(image);
-}
 
 /*
 原始C++的cv::grabCut函数参考
@@ -97,27 +95,24 @@ void grubcuter::setLblsInMask(multimap<int, int> backgroundpiexls, multimap<int,
     for( it = backgroundpiexls.begin();it!=backgroundpiexls.end();it++){
         x = it->first;
         y = it->second;
-        for(int i = y-40 ; i<y+40;i++){
+        for(int i = y-2 ; i<y+2;i++){
             if(i<0 || i>mask.cols)
                 continue;
-            for(int j=x-40;j<x+40;j++){
+            for(int j=x-2;j<x+2;j++){
                 if(j<0 || j>mask.rows)
                     continue;
                 uchar* p = mask.ptr<uchar>(i);
-                if(abs(y-i)<=20 && abs(x-j)<=20)
-                    p[j] = GC_BGD;
-                else
-                    p[j] = GC_PR_BGD;
+                    p[j] = GC_BGD;             
             }
         }
     }
     for( it = foregroundpiexls.begin();it!=foregroundpiexls.end();it++){
         x = it->first;
         y = it->second;
-        for(int i = y-20 ; i<y+20;i++){
+        for(int i = y-2 ; i<y+2;i++){
             if(i<0 || i>mask.cols)
                 continue;
-            for(int j=x-20;j<x+20;j++){
+            for(int j=x-2;j<x+2;j++){
                 if(j<0 || j>mask.rows)
                     continue;
                 uchar* p = mask.ptr<uchar>(i);
@@ -166,6 +161,7 @@ Mat grubcuter::QImage_to_Mat( const QImage &image){
 }
 
 QImage grubcuter::cvMat_to_QImage(const Mat &mat ){
+    cout<<mat.type()<<endl;
     switch ( mat.type() )
     {
        // 8-bit, 4 channel
