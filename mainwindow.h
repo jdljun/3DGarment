@@ -2,18 +2,19 @@
 #define MAINWINDOW_H
 
 #include "cutwindow.h"
+#include "grubcuter.h"
+#include "basic.h"
 #include <QMainWindow>
 #include <QDesktopWidget>
 #include <QPainter>
 #include <QMouseEvent>
-#include <basic.h>
 #include <QListView>
 #include <QMenu>
 #include <QPointF>
 #include <QMenu>
 #include <map>
 #include <QkeyEvent>
-#include <grubcuter.h>
+
 
 namespace Ui {
 class MainWindow;
