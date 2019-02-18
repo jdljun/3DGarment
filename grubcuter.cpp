@@ -16,7 +16,7 @@ grubcuter::grubcuter(QImage image, multimap<int, int> backgroundpiexls, multimap
     rect.height = h;
 
     //imwrite(grubcutResultPath,this->image);
-    grubCut(backgroundpiexls,foregroundpiexls);
+    //grubCut(backgroundpiexls,foregroundpiexls);
 }
 
 void grubcuter::grubCut(multimap<int, int> backgroundpiexls, multimap<int, int> foregroundpiexls){

@@ -15,15 +15,18 @@ TEMPLATE = app
 SOURCES += main.cpp\
     reader.cpp \
     mainwindow.cpp \
-    grubcuter.cpp
+    grubcuter.cpp \
+    cutwindow.cpp
 
 HEADERS  += \
     reader.h \
     basic.h \
     mainwindow.h \
-    grubcuter.h
+    grubcuter.h \
+    cutwindow.h
 
-FORMS    += mainwindow.ui
+FORMS    += mainwindow.ui \
+    cutwindow.ui
 
 DISTFILES +=
 

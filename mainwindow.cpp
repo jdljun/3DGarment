@@ -7,7 +7,6 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     connect(this,SIGNAL(customMousePressEvent()),this,SLOT(showmenu()));
     image.load(":/backwhite.jpg");
-    cout<<image.size().width()<<endl;
     ui->setupUi(this);
 }
 /*
@@ -116,7 +115,11 @@ void MainWindow::keyPressEvent(QKeyEvent* event){
     }
     //press y: grubcut result is ok
     if(event->key() == Qt::Key_Y){
-
+        //当前窗口关闭
+        this->hide();
+        //进入到衣片分割的窗口
+        cutwindow *cutWindow = new cutwindow(this);
+        cutWindow->show();
     }
 }
 

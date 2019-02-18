@@ -1,4 +1,5 @@
 ﻿#include "mainwindow.h"
+#include"cutwindow.h"
 #include <QApplication>
 
 using namespace std;
