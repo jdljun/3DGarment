@@ -11,6 +11,11 @@ cutwindow::cutwindow(QWidget *parent) :
     //width = x  height = y
     leftborder = new int[image.height()];
     rightborder = new int[image.height()];
+    //初始化
+    for(int i=0;i<image.height();i++){
+        leftborder[i]=-2;
+        rightborder[i]=-2;
+    }
 
     isfirstone =true;
 }
@@ -48,13 +53,11 @@ void cutwindow::paintEvent(QPaintEvent *){
         painter.setPen(Qt::red);
         painter.setBrush(Qt::red);
         painter.drawEllipse(QPointF(leftborder[i],i),2,2);
-
     }
 
     for(int i=0;i<image.height();i++){
         painter.setPen(Qt::blue);
         painter.setBrush(Qt::blue);
-
         painter.drawEllipse(QPointF(rightborder[i],i),2,2);
     }
 
@@ -90,6 +93,7 @@ void cutwindow::mouseReleaseEvent(QMouseEvent *event){
 }
 
 void cutwindow::keyPressEvent(QKeyEvent* event){
+
     //重画分割线
     if(event->key() == Qt::Key_Escape){
         for(int i = 0; i<image.height();i++){
@@ -101,9 +105,43 @@ void cutwindow::keyPressEvent(QKeyEvent* event){
 
     //进行分割
     if(event->key() == Qt::Key_Enter || event->key() == Qt::Key_Return){
-        //将分割线补充完整
-
+        //将分割线补充完整 fillCutLine();
+        for(int i=1;i<image.height();i++){
+            if(leftborder[i-1]!=-2 && leftborder[i]==-2)
+                leftborder[i]=leftborder[i-1];
+            if(rightborder[i-1]!=-2 && rightborder[i]==-2)
+                rightborder[i]=rightborder[i-1];
+        }
         //分割，生成3部分
+
+        //获取图像上每一个像素点的rgb值
+        QImage leftpart(image);
+        QImage middlepart(image);
+        QImage rightpart(image);
+        for(int i=0;i<image.width();i++){
+            for(int j=0;j<image.height();j++){
+                QRgb rgb = image.pixel(i,j);
+                if((qRed(rgb)+qGreen(rgb)+qBlue(rgb))==0)//无关点
+                    continue;
+                QRgb reg = qRgb(0,0,0);
+                if(i<=leftborder[j]){  //the point is in leftpart
+                    middlepart.setPixel(i,j,reg);
+                    rightpart.setPixel(i,j,reg);
+                }else if(i>=rightborder[j]){//the point is in rightpart
+                    leftpart.setPixel(i,j,reg);
+                    middlepart.setPixel(i,j,reg);
+                }
+                else{   //the point is in middlepart
+                    leftpart.setPixel(i,j,reg);
+                    rightpart.setPixel(i,j,reg);
+                }
+
+            }
+        }
+        //保存分割后的部分
+        leftpart.save(QString::fromStdString(leftpartpath),"JPG",100);
+        middlepart.save(QString::fromStdString(middlepartpath),"JPG",0);
+        rightpart.save(QString::fromStdString(rightpartpath),"JPG",-1);
     }
 }
 
