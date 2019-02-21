@@ -33,7 +33,7 @@ private:
     QString windowtitle = "Garment Panel Cut";
 
     multimap<int, int> tracepiexls;
-
+    void linedisappear();
     bool isfirstone;
     int* leftborder;
     int* rightborder;

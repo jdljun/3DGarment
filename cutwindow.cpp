@@ -92,15 +92,41 @@ void cutwindow::mouseReleaseEvent(QMouseEvent *event){
     }
 }
 
+void cutwindow::linedisappear(){
+    for(int i = 0; i<image.height();i++){
+        leftborder[i]=-2;
+        rightborder[i]=-2;
+    }
+}
 void cutwindow::keyPressEvent(QKeyEvent* event){
 
     //重画分割线
     if(event->key() == Qt::Key_Escape){
-        for(int i = 0; i<image.height();i++){
-            leftborder[i]=-2;
-            rightborder[i]=-2;
-        }
+        linedisappear();
         QWidget::update();
+    }
+
+    if(event->key() == Qt::Key_R){
+       image.load(QString::fromStdString(rightpartpath));
+       linedisappear();
+       QWidget::update();
+    }
+
+    if(event->key() == Qt::Key_L){
+       image.load(QString::fromStdString(leftpartpath));
+       linedisappear();
+       QWidget::update();
+    }
+
+    if(event->key() == Qt::Key_M){
+       image.load(QString::fromStdString(middlepartpath));
+       linedisappear();
+       QWidget::update();
+    }
+
+    if(event->key() == Qt::Key_Q){
+       image.load(QString::fromStdString(grubcutResultPath));
+       QWidget::update();
     }
 
     //进行分割
@@ -140,8 +166,13 @@ void cutwindow::keyPressEvent(QKeyEvent* event){
         }
         //保存分割后的部分
         leftpart.save(QString::fromStdString(leftpartpath),"JPG",100);
-        middlepart.save(QString::fromStdString(middlepartpath),"JPG",0);
-        rightpart.save(QString::fromStdString(rightpartpath),"JPG",-1);
+        middlepart.save(QString::fromStdString(middlepartpath),"JPG",100);
+        rightpart.save(QString::fromStdString(rightpartpath),"JPG",100);
+    }
+
+    //3D模型穿上服装展示
+    if(event->key() == Qt::Key_Y){
+
     }
 }
 
