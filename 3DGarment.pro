@@ -16,14 +16,20 @@ SOURCES += main.cpp\
     reader.cpp \
     mainwindow.cpp \
     grubcuter.cpp \
-    cutwindow.cpp
+    cutwindow.cpp \
+    humanview.cpp \
+    display.cpp \
+    tiny_obj_loader.cpp
 
 HEADERS  += \
     reader.h \
     basic.h \
     mainwindow.h \
     grubcuter.h \
-    cutwindow.h
+    cutwindow.h \
+    humanview.h \
+    tiny_obj_loader.h \
+    display.h
 
 FORMS    += mainwindow.ui \
     cutwindow.ui
