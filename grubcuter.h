@@ -38,6 +38,8 @@ private:
 
     Mat QImage_to_Mat( const QImage &image);
     QImage cvMat_to_QImage(const Mat &mat );
+
+    void traceBoundary(Mat src, Mat& dst);
 };
 
 #endif // GRUBCUTER_H

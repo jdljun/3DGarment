@@ -16,7 +16,7 @@ grubcuter::grubcuter(QImage image, multimap<int, int> backgroundpiexls, multimap
     rect.height = h;
 
     //imwrite(grubcutResultPath,this->image);
-    //grubCut(backgroundpiexls,foregroundpiexls);
+    // grubCut(backgroundpiexls,foregroundpiexls);
 }
 
 void grubcuter::grubCut(multimap<int, int> backgroundpiexls, multimap<int, int> foregroundpiexls){
@@ -32,6 +32,28 @@ void grubcuter::grubCut(multimap<int, int> backgroundpiexls, multimap<int, int> 
 
     //由于qt资源文件系统的特性，无法在程序运行的过程中改写qrc中的资源文件。所以写入到文件夹中，直接路径访问
     imwrite(grubcutResultPath,res);
+    //转二值图像做边界处理
+    Mat gray;
+    cvtColor(res,gray,CV_RGB2GRAY);
+    imwrite(grubcutgrayPath,gray);
+    Mat dst;
+    threshold(gray,dst,1,255,THRESH_BINARY);
+    imwrite(grubcutmaskPath,dst);
+    //边界平滑
+    Mat blur;
+    medianBlur(dst,blur,7);
+    imwrite(grubcutmaskblurPath,blur);
+    //边界提取
+    Mat element=getStructuringElement(1,Size(3,3));
+    Mat dstImg;
+    erode(blur, dstImg, element);
+    dstImg = blur - dstImg;
+    imwrite(grubcutboundaryPath,dstImg);
+    //Mat BoundaryImg = Mat::zeros(src_binary.size(), src_binary.type());
+    // traceBoundary(dstImg, BoundaryImg);
+    //imwrite(grubcutboundaryPath,BoundaryImg);
+
+
 }
 
 void grubcuter::getBinMask(){
@@ -198,6 +220,74 @@ QImage grubcuter::cvMat_to_QImage(const Mat &mat ){
           break;
     }
     return QImage();
+}
+
+void grubcuter::traceBoundary(Mat src, Mat& dst)
+{
+    //起始边界点和当前边界点
+    Point ptStart;
+    Point ptCur;
+    //搜索方向数组{左下，下，右下，右，右上，上，左上，左}
+    int Direction[8][2] = { { -1, 1 }, { 0, 1 }, { 1, 1 }, { 1, 0 }, { 1, -1 }, { 0, -1 }, { -1, -1 }, { -1, 0 } };
+    int nCurDirect = 0;//当前探查的方向
+    //搜索开始，区别ptCur==ptStart的两种情况（一种开始，一种结束）
+    bool bAtStartPt;
+
+    int xPos, yPos;
+    //逐行扫描
+    for (int i = 0; i < src.rows; i++)
+    {
+        for (int j = 0; j < src.cols; j++)
+        {
+            if (src.at<uchar>(i, j) > 0)
+            {
+                ptStart.x = j;
+                ptStart.y = i;
+
+                ptCur = ptStart;
+                bAtStartPt = true;
+                while ((ptCur.x != ptStart.x) || (ptCur.y != ptStart.y) || bAtStartPt)
+                {
+                    bAtStartPt = false;
+                    //下一个探查位置
+                    xPos = ptCur.x + Direction[nCurDirect][0];
+                    yPos = ptCur.y + Direction[nCurDirect][1];
+                    int nSearchTimes = 1;
+                    while (src.at<uchar>(yPos, xPos) ==0)
+                    {
+                        nCurDirect++;//逆时针旋转45度
+                        if (nCurDirect >= 8)
+                            nCurDirect -= 8;
+                        xPos = ptCur.x + Direction[nCurDirect][0];
+                        yPos = ptCur.y + Direction[nCurDirect][1];
+                        //8领域中都没有边界点，说明是孤立点
+                        if (++nSearchTimes >= 8)
+                        {
+                            xPos = ptCur.x;
+                            yPos = ptCur.y;
+                            break;
+                        }
+                    }
+                    //找到下一个边界点
+                    ptCur.x = xPos;
+                    ptCur.y = yPos;
+                    //在新像上标记边界
+                    dst.at<uchar>(ptCur.y, ptCur.x) = 255;
+                    /***********
+                    此处可以定义vector存储提取的边界点
+                    ************/
+                    //将当前探查方向顺时针回转90度作为下一次的探查初始方向
+                    nCurDirect -= 2;
+                    if (nCurDirect < 0)
+                    {
+                        nCurDirect += 8;
+                    }
+                }
+                return;
+            }
+            //当存在多个边界时，在此处添加相应代码，并删除return（每跟踪完一个边界，删除相应的区域）
+        }
+    }
 }
 
 /*

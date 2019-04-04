@@ -194,7 +194,7 @@ typedef struct {
   int pad2;
 
   std::map<std::string, std::string> unknown_parameter;
-} material_t;
+} material_t; //表面材质
 
 typedef struct {
   std::string name;
@@ -210,7 +210,7 @@ typedef struct {
   int vertex_index;
   int normal_index;
   int texcoord_index;
-} index_t;
+} index_t; //索引结构
 
 typedef struct {
   std::vector<index_t> indices;
@@ -219,7 +219,7 @@ typedef struct {
                                                  // ... Up to 255.
   std::vector<int> material_ids;                 // per-face material ID
   std::vector<tag_t> tags;                       // SubD tag
-} mesh_t;
+} mesh_t;  //网格结构
 
 typedef struct {
   std::string name;
