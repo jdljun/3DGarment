@@ -9,7 +9,6 @@
 #include <QkeyEvent>
 #include <QPointF>
 
-
 namespace Ui {
 class cutwindow;
 }

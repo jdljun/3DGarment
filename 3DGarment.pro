@@ -19,7 +19,8 @@ SOURCES += main.cpp\
     cutwindow.cpp \
     humanview.cpp \
     display.cpp \
-    tiny_obj_loader.cpp
+    tiny_obj_loader.cpp \
+    clothinfo.cpp
 
 HEADERS  += \
     reader.h \
@@ -29,7 +30,8 @@ HEADERS  += \
     cutwindow.h \
     humanview.h \
     tiny_obj_loader.h \
-    display.h
+    display.h \
+    clothinfo.h
 
 FORMS    += mainwindow.ui \
     cutwindow.ui
