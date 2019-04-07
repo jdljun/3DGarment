@@ -11,6 +11,9 @@ public:
     clothinfo();
     clothinfo(QImage image);
     void analysis();
+    void boundchange();
+    void borderline();
+    void panelcut();
 
     QImage image;
     QPointF leftuppoint;
@@ -20,6 +23,9 @@ public:
     float shoulderwidth;
     float collarwidth;
     float proportion; //  collarwidth/shoulderwidth
+private:
+    int* leftborder;
+    int* rightborder;
 
 };
 
