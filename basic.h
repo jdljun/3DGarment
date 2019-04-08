@@ -3,6 +3,7 @@
 #include<QString>
 #include<iostream>
 #include<QDebug>
+#include<cmath>
 
 using namespace std;
 

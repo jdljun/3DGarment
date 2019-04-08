@@ -14,6 +14,8 @@ public:
     void boundchange();
     void borderline();
     void panelcut();
+    void shoulderwidthCal();
+    void collarwidthCal();
 
     QImage image;
     QPointF leftuppoint;
