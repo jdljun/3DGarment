@@ -16,7 +16,7 @@ grubcuter::grubcuter(QImage image, multimap<int, int> backgroundpiexls, multimap
     rect.height = h;
 
     //imwrite(grubcutResultPath,this->image);
-    // grubCut(backgroundpiexls,foregroundpiexls);
+    grubCut(backgroundpiexls,foregroundpiexls);
 }
 
 void grubcuter::grubCut(multimap<int, int> backgroundpiexls, multimap<int, int> foregroundpiexls){
@@ -33,21 +33,26 @@ void grubcuter::grubCut(multimap<int, int> backgroundpiexls, multimap<int, int> 
     //由于qt资源文件系统的特性，无法在程序运行的过程中改写qrc中的资源文件。所以写入到文件夹中，直接路径访问
     imwrite(grubcutResultPath,res);
     //转二值图像做边界处理
+    res=imread(grubcutResultPath,IMREAD_COLOR);
     Mat gray;
     cvtColor(res,gray,CV_RGB2GRAY);
     imwrite(grubcutgrayPath,gray);
-    Mat dst;
-    threshold(gray,dst,1,255,THRESH_BINARY);
-    imwrite(grubcutmaskPath,dst);
+
     //边界平滑
     Mat blur;
-    medianBlur(dst,blur,7);
+    medianBlur(gray,blur,7);
     imwrite(grubcutmaskblurPath,blur);
+
+    Mat dst;
+    threshold(blur,dst,1,255,THRESH_BINARY);
+    imwrite(grubcutmaskPath,dst);
+
+
     //边界提取
     Mat element=getStructuringElement(1,Size(3,3));
     Mat dstImg;
-    erode(blur, dstImg, element);
-    dstImg = blur - dstImg;
+    erode(dst, dstImg, element);
+    dstImg = dst - dstImg;
     imwrite(grubcutboundaryPath,dstImg);
     //Mat BoundaryImg = Mat::zeros(src_binary.size(), src_binary.type());
     // traceBoundary(dstImg, BoundaryImg);

@@ -16,6 +16,7 @@ public:
     void panelcut();
     void shoulderwidthCal();
     void collarwidthCal();
+    void backclothcal();
 
     QImage image;
     QPointF leftuppoint;

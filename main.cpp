@@ -9,14 +9,14 @@ using namespace std;
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-    clothinfo c;
-    //MainWindow w;
+   // clothinfo c;
+    MainWindow w;
 
-    //w.show();
+    w.show();
     //display d;
     //d.resize(1200, 800);
     //d.show();
-    //return a.exec();
+    return a.exec();
 
 }
 

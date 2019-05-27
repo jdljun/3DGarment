@@ -6,8 +6,10 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     connect(this,SIGNAL(customMousePressEvent()),this,SLOT(showmenu()));
-    image.load(":/backwhite.jpg");
+
+    image.load(":/image.jpg");
     ui->setupUi(this);
+    cout<<"1"<<endl;
 }
 /*
 当发生一下情况时会产生绘制事件并调用paintEvent()函数:

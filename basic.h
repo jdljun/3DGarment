@@ -18,4 +18,5 @@ const string middlepartpath="C:\\Users\\lenovo-pc\\Desktop\\3DGarment\\3DGarment
 const string rightpartpath="C:\\Users\\lenovo-pc\\Desktop\\3DGarment\\3DGarment\\rightpart.jpg";
 const string testpath="C:\\Users\\lenovo-pc\\Desktop\\3DGarment\\3DGarment\\test.jpg";
 const string newboundarypath="C:\\Users\\lenovo-pc\\Desktop\\3DGarment\\3DGarment\\boundarynew.jpg";
+const string backclothpath="C:\\Users\\lenovo-pc\\Desktop\\3DGarment\\3DGarment\\backcloth.jpg";
 #endif // BASIC_H

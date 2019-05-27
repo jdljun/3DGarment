@@ -7,8 +7,9 @@ clothinfo::clothinfo()
     analysis();
     borderline();
     //panelcut();
-    shoulderwidthCal();
-    collarwidthCal();
+    //shoulderwidthCal();
+    //collarwidthCal();
+    backclothcal();
 
 }
 
@@ -19,8 +20,9 @@ clothinfo::clothinfo(QImage image)
     analysis();
     borderline();
     //panelcut();
-    shoulderwidthCal();
-    collarwidthCal();
+    //shoulderwidthCal();
+    //collarwidthCal();
+    backclothcal();
 }
 
 void clothinfo::boundchange(){
@@ -272,4 +274,48 @@ void clothinfo::collarwidthCal(){
     proportion=collarwidth/shoulderwidth;
     cout<<"collarwidth="<<collarwidth<<endl;
     cout<<"proportion="<<proportion<<endl;
+}
+
+void clothinfo::backclothcal(){
+    QImage newimage;
+    newimage.load(QString::fromStdString(grubcutResultPath));
+
+    long long int rsum=0,gsum=0,bsum=0;
+    int num=0;
+    for(int i=0;i<newimage.width();i++){
+        for(int j=0;j<newimage.height();j++){
+            QRgb rgb = newimage.pixel(i,j);
+            if((qRed(rgb)+qGreen(rgb)+qBlue(rgb))<=100)//无关点
+                continue;
+            num++;
+            rsum+=qRed(rgb);
+            gsum+=qGreen(rgb);
+            bsum+=qBlue(rgb);
+        }
+    }
+    int r=rsum/num;
+    int g=gsum/num;
+    int b=bsum/num;
+    //cout<<r<<" "<<g<<" "<<b<<endl;
+
+    QImage backpart(newimage);
+    int x1=leftuppoint.x();
+    int x2=rightuppoint.x();
+    int y1=max(leftuppoint.y(),rightuppoint.y());
+    int y2=min(leftcutpoint.y(),rightuppoint.y());
+    for(int i=0;i<newimage.width();i++){
+        for(int j=0;j<newimage.height();j++){
+            QRgb rgb = newimage.pixel(i,j);
+            QRgb reg = qRgb(r,g,b);
+            if((qRed(rgb)+qGreen(rgb)+qBlue(rgb))<=100){
+                if(i>=x1&&i<=x2&&j>=y1&&j<=y2)
+                    backpart.setPixel(i,j,reg);
+                else
+                    continue;
+            }
+            backpart.setPixel(i,j,reg);
+        }
+    }
+
+    backpart.save(QString::fromStdString(backclothpath),"JPG",100);
 }
